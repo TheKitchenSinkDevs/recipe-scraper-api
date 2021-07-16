@@ -1,1 +1,1 @@
-# recipie-scraper-api
+# recipe-scraper-api
