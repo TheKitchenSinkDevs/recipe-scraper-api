@@ -1,11 +1,16 @@
 import string
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from recipe_scrapers import scrape_me
+from recipe_scrapers._exceptions import WebsiteNotImplementedError
 from base64 import b64encode, b64decode
 import logging
 
+from .routers import units
+
 app = FastAPI()
+
+app.include_router(units.router)
 
 log = logging.getLogger("RECIPIE_SCRAPER")
 log.setLevel(logging.INFO)
@@ -23,7 +28,11 @@ async def parse(url: str):
         scraped = scrape_me(url)
         ingredients = parse_ingredients(scraped.ingredients())
         failed = False
+    except AttributeError as err:
+        raise HTTPException(status_code=400, detail="Site Not supported")
     except BaseException as err:
+        import pdb; pdb.set_trace()
+        log.error("Unexpected Exception")
         log.error(err)
         failed = True
 
