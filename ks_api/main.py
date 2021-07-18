@@ -8,12 +8,18 @@ import logging
 
 from .routers import units
 
+from .database import crud, models, schemas
+from .database.db import SessionLocal, engine
+
+models.Base.metadata.create_all(bind=engine)
+
 app = FastAPI()
 
 app.include_router(units.router)
 
 log = logging.getLogger("RECIPIE_SCRAPER")
 log.setLevel(logging.INFO)
+
 
 @app.get("/")
 async def root():
